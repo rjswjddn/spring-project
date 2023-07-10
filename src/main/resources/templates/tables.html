@@ -63,7 +63,7 @@
                                         </tr>
                                     </tfoot>
                                     <tbody>
-                                        <tr th:each = "users : ${user}">
+                                        <tr th:each = "users : ${userdto}">
                                             <td th:text="${users.seq}"></td>
                                             <td th:text="${users.user_id}"></td>
                                             <td th:text="${users.user_name}"></td>

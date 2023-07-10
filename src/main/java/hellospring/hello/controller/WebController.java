@@ -1,14 +1,13 @@
 package hellospring.hello.controller;
 
-import hellospring.hello.entity.User;
+import hellospring.hello.dto.UserDTO;
+import hellospring.hello.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import hellospring.hello.service.UserService;
-
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -17,7 +16,7 @@ public class WebController {
 
     private final UserService userService;
 
-    @GetMapping(value = {"/", "/index"})
+    @GetMapping({"", "/", "/index"})
     public String index(){
         return "index";
     }
@@ -59,20 +58,20 @@ public class WebController {
 
     @GetMapping("/register")
     public String register(Model model){
-        model.addAttribute("user", new User());
+        model.addAttribute("userdto", new UserDTO());
         return "register";
     }
 
     /* 정보 입력받고 리다이렉트로 tables로 이동 */
     @PostMapping("/register")
-    public String registerdo(@ModelAttribute("user") User user){
-        userService.registerUser(user);
+    public String registerdo(@ModelAttribute("userdto") UserDTO userdto){
+        userService.registerUser(userdto);
         return "redirect:/tables";
     }
 
     @GetMapping("/tables")
     public String tables(Model model){
-        model.addAttribute("user", userService.getUsers());
+        model.addAttribute("userdto", userService.getUsers());
         return "tables";
     }
 
@@ -81,27 +80,21 @@ public class WebController {
 
         log.info("id: {}", id);
 
-        User user = userService.getUser(id);
+        UserDTO userdto = userService.getUser(id);
 
-        log.info("user: {}", user);
-        model.addAttribute("user", user);
+        log.info("user: {}", userdto);
+
+        model.addAttribute("userdto", userdto);
         return "/user-update";
     }
 
 
     @PutMapping("/tables/update/{id}")
-    public String updateUser(@PathVariable("id") Long id, User user){
+    public String updateUser(@PathVariable("id") Long id , @ModelAttribute("userdto") UserDTO userdto){
 
-        log.info("user: {}", user);
+        log.info("user: {}", userdto);
 
-        User update_user = userService.getUser(id);
-
-
-        update_user.setUser_id(user.getUser_id());
-        update_user.setUser_name(user.getUser_name());
-        update_user.setMemo(user.getMemo());
-
-        userService.updateUser(update_user);
+        userService.updateUser(id, userdto);
         return "redirect:/tables";
     }
 
